@@ -1,10 +1,10 @@
-# ⚡ NovaBuy — Premium Flask E-Commerce Platform
+# NovaBuy — Premium Flask E-Commerce Platform
 
 NovaBuy is a state-of-the-art, high-fidelity e-commerce application built using **Flask (Python)** on the backend and a **premium glassmorphic dark theme** on the frontend. The application features micro-interactions, real product curation, scroll-triggered animations, and a real-time order cancellation countdown manager.
 
 ---
 
-## 🌌 Project Showcase
+## Project Showcase
 
 ### Core Aesthetics
 - **Dark Mode Design System**: A sleek, immersive color palette using deep blues, purples, and cyans combined with modern typography (Inter).
@@ -13,7 +13,7 @@ NovaBuy is a state-of-the-art, high-fidelity e-commerce application built using 
 
 ---
 
-## 🛠️ Feature Walkthrough
+## Feature Walkthrough
 
 ### 1. Catalog & Real Product Curation
 - **Interactive Shop**: Features real-time category filtering, text search, and multiple sorting algorithms (Newest, Price: Low to High, Price: High to Low, Top Rated).
@@ -37,7 +37,7 @@ NovaBuy is a state-of-the-art, high-fidelity e-commerce application built using 
 
 ---
 
-## 📂 Project Architecture
+## Project Architecture
 
 ```
 Flask/
@@ -74,7 +74,7 @@ Flask/
 
 ---
 
-## 🛢️ Database Schema (`models.py`)
+## Database Schema (`models.py`)
 
 The application uses an SQLite database with Flask-SQLAlchemy object relationships:
 
@@ -146,7 +146,7 @@ erDiagram
 
 ---
 
-## ⚡ Setup & Installation
+## Setup & Installation
 
 ### Prerequisites
 - Python 3.8 or higher
@@ -188,7 +188,7 @@ Open your browser and navigate to `http://127.0.0.1:5000` to browse the store.
 
 ---
 
-## 🧪 Verification & Development
+## Verification & Development
 
 ### Local Config (`.env`)
 By default, the application runs on a local SQLite instance (`sqlite:///ecommerce.db`). Create a `.env` file to customize your production variables:
