@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}My Orders{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title"><i class="fas fa-receipt"></i> My Orders</h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Orders</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if orders %}
+        <div class="orders-list">
+            {% for order in orders %}
+            <a href="{{ url_for('order_detail', order_id=order.id) }}" class="order-card {% if order.status == 'Cancelled' %}order-cancelled{% endif %}">
+                <div class="order-header">
+                    <div>
+                        <span class="order-id">Order #{{ order.id }}</span>
+                        <span class="order-date">{{ order.created_at.strftime('%B %d, %Y') }}</span>
+                    </div>
+                    <div class="order-header-right">
+                        {% if order.can_cancel %}
+                            <span class="cancel-badge"><i class="fas fa-clock"></i> Cancellable</span>
+                        {% endif %}
+                        <span class="order-status status-{{ order.status|lower }}">{{ order.status }}</span>
+                    </div>
+                </div>
+                <div class="order-body">
+                    <div class="order-items-preview">
+                        {% for item in order.items[:3] %}
+                        <span class="order-item-chip">{{ item.product.name }} x{{ item.quantity }}</span>
+                        {% endfor %}
+                        {% if order.items|length > 3 %}
+                        <span class="order-item-chip more">+{{ order.items|length - 3 }} more</span>
+                        {% endif %}
+                    </div>
+                    <div class="order-total">
+                        <span>Total: <strong>${{ "%.2f"|format(order.total) }}</strong></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>No orders yet</h3>
+            <p>You haven't placed any orders. Start shopping to see your orders here.</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-cart"></i> Browse Products
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

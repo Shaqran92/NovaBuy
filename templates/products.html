@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title">
+            {% if current_category %}{{ current_category }}{% elif search %}Search: "{{ search }}"{% else %}All Products{% endif %}
+        </h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Products</span>
+            {% if current_category %}
+                <i class="fas fa-chevron-right"></i>
+                <span>{{ current_category }}</span>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="section products-page">
+    <div class="container">
+        <div class="products-layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Categories</h3>
+                    <div class="sidebar-links">
+                        <a href="{{ url_for('products') }}" class="sidebar-link {% if not current_category %}active{% endif %}">
+                            <i class="fas fa-th-large"></i> All Products
+                        </a>
+                        {% for cat in categories %}
+                        <a href="{{ url_for('products', category=cat) }}" class="sidebar-link {% if current_category == cat %}active{% endif %}">
+                            <i class="fas fa-tag"></i> {{ cat }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="sidebar-card">
+                    <h3 class="sidebar-title">Sort By</h3>
+                    <div class="sidebar-links">
+                        <a href="{{ url_for('products', category=current_category, sort='newest', search=search) }}" class="sidebar-link {% if current_sort == 'newest' %}active{% endif %}">
+                            <i class="fas fa-clock"></i> Newest
+                        </a>
+                        <a href="{{ url_for('products', category=current_category, sort='price_low', search=search) }}" class="sidebar-link {% if current_sort == 'price_low' %}active{% endif %}">
+                            <i class="fas fa-arrow-down-short-wide"></i> Price: Low to High
+                        </a>
+                        <a href="{{ url_for('products', category=current_category, sort='price_high', search=search) }}" class="sidebar-link {% if current_sort == 'price_high' %}active{% endif %}">
+                            <i class="fas fa-arrow-up-wide-short"></i> Price: High to Low
+                        </a>
+                        <a href="{{ url_for('products', category=current_category, sort='rating', search=search) }}" class="sidebar-link {% if current_sort == 'rating' %}active{% endif %}">
+                            <i class="fas fa-star"></i> Top Rated
+                        </a>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- PRODUCT GRID -->
+            <div class="products-main">
+                <div class="products-toolbar">
+                    <span class="products-count">{{ products|length }} product{{ 's' if products|length != 1 }}</span>
+                </div>
+
+                {% if products %}
+                <div class="products-grid">
+                    {% for product in products %}
+                    <div class="product-card">
+                        {% if product.discount_percent > 0 %}
+                            <span class="product-badge">-{{ product.discount_percent }}%</span>
+                        {% endif %}
+                        <a href="{{ url_for('product_detail', product_id=product.id) }}" class="product-image-link">
+                            <div class="product-image">
+                                {% if product.image_url %}
+                                    <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                                {% else %}
+                                    <div class="product-image-placeholder">
+                                        <i class="fas fa-image"></i>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </a>
+                        <div class="product-info">
+                            <span class="product-category">{{ product.category }}</span>
+                            <a href="{{ url_for('product_detail', product_id=product.id) }}">
+                                <h3 class="product-name">{{ product.name }}</h3>
+                            </a>
+                            <div class="product-rating">
+                                {% for i in range(5) %}
+                                    {% if i < product.rating|int %}
+                                        <i class="fas fa-star"></i>
+                                    {% else %}
+                                        <i class="far fa-star"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span>{{ product.rating }}</span>
+                            </div>
+                            <div class="product-price-row">
+                                <span class="product-price">${{ "%.2f"|format(product.price) }}</span>
+                                {% if product.original_price %}
+                                    <span class="product-original-price">${{ "%.2f"|format(product.original_price) }}</span>
+                                {% endif %}
+                            </div>
+                            {% if current_user.is_authenticated %}
+                            <form action="{{ url_for('add_to_cart', product_id=product.id) }}" method="POST">
+                                <input type="hidden" name="quantity" value="1">
+                                <input type="hidden" name="next" value="{{ request.url }}">
+                                <button type="submit" class="btn btn-primary btn-sm btn-full">
+                                    <i class="fas fa-cart-plus"></i> Add to Cart
+                                </button>
+                            </form>
+                            {% else %}
+                            <a href="{{ url_for('login') }}" class="btn btn-outline btn-sm btn-full">
+                                <i class="fas fa-sign-in-alt"></i> Login to Buy
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="fas fa-search"></i>
+                    <h3>No products found</h3>
+                    <p>Try adjusting your search or filters.</p>
+                    <a href="{{ url_for('products') }}" class="btn btn-primary">View All Products</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

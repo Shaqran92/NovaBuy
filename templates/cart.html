@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Shopping Cart{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title"><i class="fas fa-shopping-cart"></i> Shopping Cart</h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Cart</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        {% if items %}
+        <div class="cart-layout">
+            <div class="cart-items">
+                {% for item in items %}
+                <div class="cart-item">
+                    <div class="cart-item-image">
+                        {% if item.product.image_url %}
+                            <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                        {% else %}
+                            <div class="product-image-placeholder small">
+                                <i class="fas fa-image"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="cart-item-details">
+                        <a href="{{ url_for('product_detail', product_id=item.product.id) }}">
+                            <h3>{{ item.product.name }}</h3>
+                        </a>
+                        <span class="cart-item-category">{{ item.product.category }}</span>
+                        <span class="cart-item-price">${{ "%.2f"|format(item.product.price) }} each</span>
+                    </div>
+                    <div class="cart-item-quantity">
+                        <form action="{{ url_for('update_cart', item_id=item.id) }}" method="POST" class="qty-form">
+                            <div class="quantity-controls">
+                                <button type="submit" name="quantity" value="{{ item.quantity - 1 }}" class="qty-btn">-</button>
+                                <span class="qty-display">{{ item.quantity }}</span>
+                                <button type="submit" name="quantity" value="{{ item.quantity + 1 }}" class="qty-btn">+</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="cart-item-subtotal">
+                        <span>${{ "%.2f"|format(item.subtotal) }}</span>
+                    </div>
+                    <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="POST">
+                        <button type="submit" class="cart-remove-btn" title="Remove item">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </form>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal ({{ items|length }} items)</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="free-shipping">{% if total >= 50 %}Free{% else %}$4.99{% endif %}</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span>${{ "%.2f"|format(total + (0 if total >= 50 else 4.99)) }}</span>
+                    </div>
+                    <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-lg btn-full">
+                        <i class="fas fa-lock"></i> Proceed to Checkout
+                    </a>
+                    <a href="{{ url_for('products') }}" class="btn btn-glass btn-full" style="margin-top: 0.75rem;">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-cart-arrow-down"></i>
+            <h3>Your cart is empty</h3>
+            <p>Looks like you haven't added any products yet.</p>
+            <a href="{{ url_for('products') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-bag"></i> Start Shopping
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

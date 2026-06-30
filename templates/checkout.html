@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Checkout{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="container">
+        <h1 class="page-title"><i class="fas fa-credit-card"></i> Checkout</h1>
+        <div class="breadcrumb">
+            <a href="{{ url_for('home') }}">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{{ url_for('cart') }}">Cart</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Checkout</span>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <form action="{{ url_for('checkout') }}" method="POST" class="checkout-layout">
+            <div class="checkout-form">
+                <div class="form-card">
+                    <h3><i class="fas fa-map-marker-alt"></i> Shipping Information</h3>
+                    {% if current_user.full_name or current_user.address %}
+                    <div class="saved-address-note">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Pre-filled from your <a href="{{ url_for('profile') }}">saved profile</a></span>
+                    </div>
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="full_name">Full Name</label>
+                        <input type="text" id="full_name" name="full_name" placeholder="John Doe" value="{{ current_user.full_name or '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" value="{{ current_user.phone or '' }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <textarea id="address" name="address" rows="3" placeholder="Street address, apartment, suite..." required>{{ current_user.address or '' }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="New York" value="{{ current_user.city or '' }}" required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h3>Order Summary</h3>
+                    {% for item in items %}
+                    <div class="summary-item">
+                        <div class="summary-item-info">
+                            <span class="summary-item-name">{{ item.product.name }}</span>
+                            <span class="summary-item-qty">x{{ item.quantity }}</span>
+                        </div>
+                        <span class="summary-item-price">${{ "%.2f"|format(item.subtotal) }}</span>
+                    </div>
+                    {% endfor %}
+                    <div class="summary-divider"></div>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>${{ "%.2f"|format(total) }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="free-shipping">{% if total >= 50 %}Free{% else %}$4.99{% endif %}</span>
+                    </div>
+                    <div class="summary-divider"></div>
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span>${{ "%.2f"|format(total + (0 if total >= 50 else 4.99)) }}</span>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg btn-full">
+                        <i class="fas fa-check-circle"></i> Place Order
+                    </button>
+                    <div class="cancel-info-note">
+                        <i class="fas fa-clock"></i>
+                        <span>You'll have {{ cancel_window }} minutes to cancel after placing</span>
+                    </div>
+                    <div class="secure-note">
+                        <i class="fas fa-shield-halved"></i>
+                        <span>Your information is secure and encrypted</span>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
